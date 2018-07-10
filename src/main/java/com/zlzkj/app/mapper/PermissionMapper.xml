@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zlzkj.app.mapper.PermissionMapper" >
+  <resultMap id="BaseResultMap" type="com.zlzkj.app.model.index.Authority" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <delete id="deleteByRoleId" parameterType="java.lang.String" >
+    delete from x_user
+    where roleId = #{roleId,jdbcType=VARCHAR}
+  </delete>
+  <select id="selectAuthorityByRoleId" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select a.id, a.name, a.code, a.description
+    from x_role_authority ra
+    left join x_authority a on ra.authority_id = a.id
+    where ra.role_id = #{roleId,jdbcType=VARCHAR}
+  </select>
+  <resultMap id="roleResultMap" type="com.zlzkj.app.model.index.Role" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="code" property="code" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+  </resultMap>
+  <select id="selectRolesByRoleId" resultMap="roleResultMap" parameterType="java.lang.String" >
+    select id,name,code,description
+    from x_role
+    where id = #{roleId,jdbcType=VARCHAR}
+  </select>
+</mapper>

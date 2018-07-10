@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zlzkj.app.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.zlzkj.app.model.index.User" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="avatar" property="avatar" jdbcType="VARCHAR" />
+    <result column="small_avatar" property="smallAvatar" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="role_id" property="roleId" jdbcType="VARCHAR" />
+    <result column="tenant_id" property="tenantId" jdbcType="VARCHAR" />
+    <result column="is_deleted" property="isDeleted" jdbcType="BOOLEAN" />
+    <result column="is_locked" property="isLocked" jdbcType="BOOLEAN" />
+    <result column="last_ip" property="lastIp" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,name,username,password,avatar,small_avatar,phone,email,role_id,tenant_id,is_deleted,is_locked,last_ip,description,address,created_time,updated_time
+  </sql>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from x_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByMap" parameterType="map" >
+    delete from x_user
+    <where>
+        and id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+    </where>
+  </delete>
+  <insert id="insert" parameterType="com.zlzkj.app.model.index.User" >
+    insert into x_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null">id,</if>
+      <if test="name != null">name,</if>
+      <if test="username != null">username,</if>
+      <if test="password != null">password,</if>
+      <if test="avatar != null">avatar,</if>
+      <if test="smallAvatar != null">small_avatar,</if>
+      <if test="phone != null">phone,</if>
+      <if test="email != null">email,</if>
+      <if test="address != null">address,</if>
+      <if test="roleId != null">role_id,</if>
+      <if test="tenantId != null">tenant_id,</if>
+      <if test="description != null">description,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null">#{id},</if>
+      <if test="name != null">#{name},</if>
+      <if test="username != null">#{username},</if>
+      <if test="password != null">#{password},</if>
+      <if test="avatar != null">#{avatar},</if>
+      <if test="smallAvatar != null">#{smallAvatar},</if>
+      <if test="phone != null">#{phone},</if>
+      <if test="email != null">#{email},</if>
+      <if test="address != null">#{address},</if>
+      <if test="roleId != null">#{roleId},</if>
+      <if test="tenantId != null">#{tenantId},</if>
+      <if test="description != null">#{description},</if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.zlzkj.app.model.index.User" >
+    update x_user
+    <set >
+      <if test="name != null">name = #{name,jdbcType=VARCHAR},</if>
+      <if test="password != null">password = #{password,jdbcType=VARCHAR},</if>
+      <if test="avatar != null">avatar = #{avatar,jdbcType=VARCHAR},</if>
+      <if test="smallAvatar != null">small_avatar = #{smallAvatar,jdbcType=VARCHAR},</if>
+      <if test="phone != null">phone = #{phone,jdbcType=VARCHAR},</if>
+      <if test="email != null">email = #{email,jdbcType=VARCHAR},</if>
+      <if test="address != null">address = #{address,jdbcType=VARCHAR},</if>
+      <if test="isDeleted != null">is_deleted = #{isDeleted,jdbcType=VARCHAR},</if>
+      <if test="isLocked != null">is_locked = #{isLocked,jdbcType=VARCHAR},</if>
+      <if test="roleId != null">role_id = #{roleId,jdbcType=VARCHAR},</if>
+      <if test="lastIp != null">last_ip = #{lastIp,jdbcType=VARCHAR},</if>
+      <if test="description != null">description = #{description,jdbcType=VARCHAR},</if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from x_user
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <select id="selectByUserName" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from x_user
+    where username = #{username,jdbcType=VARCHAR}
+  </select>
+
+  <select id="selectByMap" resultType="com.zlzkj.app.model.Row" parameterType="map" >
+    select
+      u.id,u.name,username,password,avatar,small_avatar,phone,email,role_id,is_deleted,u.is_locked,last_ip,u.description,address,
+      u.created_time,u.updated_time,r.code as role_code,r.name as role_name
+    from x_user u
+    left join x_role r on u.role_id = r.id
+    <where>
+      <if test="tenantId != null ">u.tenant_id = #{tenantId}</if>
+      <if test="roleId != null ">and u.role_id = #{roleId}</if>
+      <if test="keyword != null and keyword != ''">and u.name like <![CDATA['%']]> #{keyword,jdbcType=VARCHAR} <![CDATA['%']]></if>
+      <if test="isLocked != null ">and u.is_locked = #{isLocked}</if>
+      <if test="username != null ">and u.username = #{username}</if>
+      <if test="ids != null">
+        and u.id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+          #{id}
+        </foreach>
+      </if>
+    </where>
+    order by u.created_time
+    <!--<if test="start != null and start &gt; -1">
+      limit #{start} , #{end}
+    </if>-->
+  </select>
+
+  <select id="countByMap" resultType="java.lang.Integer" parameterType="map" >
+    select count(*)
+    from x_user
+    <where>
+      <if test="tenantId != null ">tenant_id = #{tenantId}</if>
+      <if test="roleId != null ">and role_id = #{roleId}</if>
+      <if test="keyword != null ">and name like <![CDATA['%']]> #{keyword,jdbcType=VARCHAR} <![CDATA['%']]></if>
+      <if test="isLocked != null ">and is_locked = #{isLocked}</if>
+      <if test="username != null ">and username = #{username}</if>
+    </where>
+  </select>
+
+  <insert id="test" parameterType="java.lang.Integer" >
+    insert into x_test
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="value != null">value,</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="value != null">#{value},</if>
+    </trim>
+  </insert>
+</mapper>
