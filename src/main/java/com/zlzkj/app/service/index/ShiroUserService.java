@@ -43,17 +43,18 @@ public class ShiroUserService {
         // TODO Auto-generated method stub
         org.apache.shiro.subject.Subject my = SecurityUtils.getSubject();
 
-        /*String username = (String) my.getPrincipal();
+        /*String username = (String) my.getPrincipal();*/
 
-        if (username == null) {
-            return null;
-        }*/
+        if (my.getPrincipal() == null) {
+            my.logout();
+            throw new AuthenticationException();
+        }
 
         return (User)my.getPrincipal();
     }
 
     public boolean isSuperAdmin() {
-        return getLoginUser().getRoleId().equals("1");
+        return getLoginUser().getRoleId().equals(1);
     }
 
     public void setUserSessionPermission(List<Authority> permissions) {

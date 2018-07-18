@@ -27,11 +27,11 @@ public class AppExceptionHandler implements HandlerExceptionResolver {
 
         if (ex instanceof UnauthenticatedException) {
             return new ModelAndView("redirect:/", model);
-        } else if (ex instanceof AuthorizationException || ex instanceof UnauthorizedException) {
+        } else if (ex instanceof AuthorizationException) {
             if ("XMLHttpRequest".equals(request.getHeader("x-requested-with"))) {
                 try {
                     //response.setStatus(HttpStatus.OK.value()); //设置状态码
-                    Map<String, Object> jsonData = new HashMap();
+                    Map<String, Object> jsonData = new HashMap<>();
                     jsonData.put("status",-1);
                     jsonData.put("hasNoPermission",true);
                     String text = JSON.toJSONString(jsonData);
@@ -65,14 +65,16 @@ public class AppExceptionHandler implements HandlerExceptionResolver {
         response.setDateHeader("Expires", 0L);
         PrintWriter pw = null;
 
-
         try {
             pw = response.getWriter();
             pw.write(text);
-        } catch (IOException var8) {
-            //var8.printStackTrace();
-        } finally {
             pw.close();
+        } catch (IOException var8) {
+            var8.printStackTrace();
+        } finally {
+            if(pw != null){
+                pw.close();
+            }
         }
 
     }
